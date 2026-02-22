@@ -3,132 +3,631 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Norman Lives — Privacy Policy</title>
+  <title>Norman Lives — A Post-Apocalyptic Survival RPG</title>
+  <meta name="description" content="Survive the wasteland in Norman Lives, a procedurally generated post-apocalyptic survival RPG with permadeath, 8 biomes, 14 weapons, and co-op multiplayer. Available on iOS.">
+  <meta property="og:title" content="Norman Lives — A Post-Apocalyptic Survival RPG">
+  <meta property="og:description" content="Permadeath. Procedural worlds. 8 biomes. 14 weapons. Co-op multiplayer. How long can you survive?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jforward5.github.io/normanlives/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0d0d0d;
-      --surface: #1a1a1a;
-      --text: #e0e0e0;
-      --muted: #888;
-      --accent: #f5a623;
-      --border: #2a2a2a;
+      --bg: #0a0a08;
+      --surface: #151512;
+      --surface2: #1c1c18;
+      --text: #d4d0c8;
+      --muted: #6b6860;
+      --green: #33cc33;
+      --green-dim: #1a6b1a;
+      --red: #e63333;
+      --red-dim: #7a1a1a;
+      --amber: #f5a623;
+      --amber-dim: #8a5c10;
+      --border: #2a2820;
+      --mono: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.7;
-      padding: 0 20px;
+      overflow-x: hidden;
     }
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 48px 0 80px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 48px;
-      padding-bottom: 32px;
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10,10,8,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
+      padding: 0 24px;
     }
-    header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 4px;
+    nav .inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
     }
-    header p {
+    nav .logo {
+      font-family: var(--mono);
+      font-weight: 800;
+      font-size: 18px;
+      text-decoration: none;
+    }
+    nav .logo .n { color: var(--green); }
+    nav .logo .l { color: var(--red); }
+    nav .links { display: flex; gap: 28px; }
+    nav .links a {
       color: var(--muted);
+      text-decoration: none;
       font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
     }
-    h2 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #fff;
-      margin: 36px 0 12px;
+    nav .links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(51,204,51,0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(230,51,51,0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(245,166,35,0.02) 0%, transparent 60%);
     }
-    p, li {
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+      background: linear-gradient(to top, var(--bg), transparent);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-family: var(--mono);
+      font-weight: 800;
+      letter-spacing: -2px;
+      margin-bottom: 8px;
+    }
+    .hero-title .norman {
+      font-size: clamp(56px, 12vw, 100px);
+      display: block;
+      color: var(--green);
+      text-shadow: 0 0 40px rgba(51,204,51,0.3), 0 0 80px rgba(51,204,51,0.1);
+    }
+    .hero-title .lives {
+      font-size: clamp(56px, 12vw, 100px);
+      display: block;
+      color: var(--red);
+      text-shadow: 0 0 40px rgba(230,51,51,0.3), 0 0 80px rgba(230,51,51,0.1);
+    }
+    .hero-tagline {
+      font-family: var(--mono);
+      font-size: clamp(13px, 2vw, 16px);
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+    .hero-desc {
+      max-width: 540px;
+      font-size: 17px;
+      color: var(--text);
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 12px;
       font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #fff;
+      color: #000;
+    }
+    .btn-primary:hover {
+      background: #e0e0e0;
+      transform: translateY(-1px);
+    }
+    .btn-primary svg { width: 20px; height: 20px; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--muted);
+      background: var(--surface);
+    }
+
+    /* Sections */
+    section {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--amber);
       margin-bottom: 12px;
     }
-    ul {
-      padding-left: 24px;
-      margin-bottom: 12px;
+    .section-title {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.2;
     }
-    li { margin-bottom: 6px; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .card {
+    .section-desc {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 48px;
+    }
+
+    /* Feature grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .feature {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin: 20px 0;
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
     }
-    .card p:last-child { margin-bottom: 0; }
-    footer {
-      margin-top: 48px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      text-align: center;
+    .feature:hover {
+      border-color: var(--amber-dim);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .feature h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .feature p {
+      font-size: 14px;
       color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Stats bar */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 2px;
+      background: var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 60px 0;
+    }
+    .stat {
+      background: var(--surface);
+      padding: 28px 20px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: var(--mono);
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
       font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Arsenal section */
+    .arsenal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .arsenal-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .arsenal-item .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .arsenal-item .name {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .arsenal-item .type {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Biome strip */
+    .biomes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 48px;
+    }
+    @media (max-width: 680px) {
+      .biomes { grid-template-columns: repeat(2, 1fr); }
+    }
+    .biome {
+      border-radius: 12px;
+      padding: 20px 16px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .biome-name {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .biome-danger {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Permadeath callout */
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--red-dim);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin: 60px 0;
+    }
+    .callout h3 {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+    .callout p {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+    }
+    footer .inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer .copy {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    footer .foot-links {
+      display: flex;
+      gap: 24px;
+    }
+    footer .foot-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    footer .foot-links a:hover { color: var(--text); }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      nav .links { gap: 16px; }
+      nav .links a { font-size: 13px; }
+      section { padding: 60px 20px; }
+      .stat { padding: 20px 12px; }
+      .stat-num { font-size: 24px; }
+      .callout { padding: 28px 20px; }
+      footer .inner { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Norman Lives</h1>
-      <p>Privacy Policy</p>
-    </header>
 
-    <p>Last updated: February 21, 2026</p>
+  <nav>
+    <div class="inner">
+      <a href="/" class="logo"><span class="n">NORMAN</span> <span class="l">LIVES</span></a>
+      <div class="links">
+        <a href="#features">Features</a>
+        <a href="#world">World</a>
+        <a href="#arsenal">Arsenal</a>
+        <a href="privacy.html">Privacy</a>
+      </div>
+    </div>
+  </nav>
 
-    <p>JBITPRO ("we", "our", or "us") built Norman Lives as a premium iOS application. This Privacy Policy explains how we handle information when you use our app.</p>
+  <!-- Hero -->
+  <div class="hero">
+    <h1 class="hero-title">
+      <span class="norman">NORMAN</span>
+      <span class="lives">LIVES</span>
+    </h1>
+    <p class="hero-tagline">A Post-Apocalyptic Survival RPG</p>
+    <p class="hero-desc">
+      Drop into a procedurally generated wasteland. Scavenge weapons, fight mutant horrors, explore 8 deadly biomes, and try to survive. One life. No checkpoints. When you die, it's over.
+    </p>
+    <div class="cta-group">
+      <a href="#" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Download on the App Store
+      </a>
+      <a href="#features" class="btn btn-ghost">Learn More</a>
+    </div>
+  </div>
 
-    <div class="card">
-      <p><strong>The short version:</strong> Norman Lives does not collect, store, or share your personal data. We have no servers, no analytics, and no tracking. Your gameplay data stays on your device and in your iCloud account.</p>
+  <!-- Stats -->
+  <section style="padding-top: 0;">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Biomes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">14</div>
+        <div class="stat-label">Weapons</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">16</div>
+        <div class="stat-label">Enemy Types</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Boss Fights</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2-4</div>
+        <div class="stat-label">Co-Op Players</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="section-label">Gameplay</div>
+    <h2 class="section-title">Built to kill you.</h2>
+    <p class="section-desc">Every run is different. Every death is permanent. Norman Lives combines roguelike tension with deep RPG progression in a hostile procedural world.</p>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon" style="background: rgba(51,204,51,0.1); color: var(--green);">&#9876;</div>
+        <h3>Permadeath Survival</h3>
+        <p>One life. No saves. No second chances. Death erases everything — your weapons, your levels, your progress. Start over and try again.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background: rgba(245,166,35,0.1); color: var(--amber);">&#9881;</div>
+        <h3>Procedural Worlds</h3>
+        <p>Infinite terrain generated from seed. Dense forests, crumbling cities, scorching deserts, frozen tundra — no two runs explore the same map.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background: rgba(230,51,51,0.1); color: var(--red);">&#9889;</div>
+        <h3>Deep Combat</h3>
+        <p>14 weapons across melee and ranged. 6 damage types. Dodge rolls, quick-swaps, and weapon rarity from Common to Legendary.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background: rgba(100,140,255,0.1); color: #648cff;">&#9812;</div>
+        <h3>RPG Progression</h3>
+        <p>Level up to unlock sprint, dodge roll, armor slots, HP regen, and more. Every level makes you stronger — until permadeath resets it all.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background: rgba(180,80,220,0.1); color: #b450dc;">&#9813;</div>
+        <h3>Epic Boss Fights</h3>
+        <p>Four multi-phase bosses guard the wasteland's deadliest zones. Alpha Mutant. War Machine. Hive Queen. Sentinel Core.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background: rgba(51,150,204,0.1); color: #3396cc;">&#9814;</div>
+        <h3>Co-Op Multiplayer</h3>
+        <p>Survive together with 2-4 players via Game Center. Share the wasteland. Share the danger. Permadeath still applies.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- World -->
+  <section id="world">
+    <div class="section-label">Exploration</div>
+    <h2 class="section-title">8 biomes. Infinite danger.</h2>
+    <p class="section-desc">Venture further from the center and the world gets deadlier. Each biome brings unique enemies, terrain, and resources.</p>
+
+    <div class="biomes">
+      <div class="biome" style="background: linear-gradient(135deg, #1a2e12, #0d1a08);">
+        <div class="biome-name">Dense Forest</div>
+        <div class="biome-danger">Danger 1</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #2a331e, #161c0e);">
+        <div class="biome-name">Forest Ruins</div>
+        <div class="biome-danger">Danger 2</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #33312a, #1a1916);">
+        <div class="biome-name">Ruins</div>
+        <div class="biome-danger">Danger 3</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #312720, #1a1510);">
+        <div class="biome-name">Ruined City</div>
+        <div class="biome-danger">Danger 4</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #3d3422, #201c12);">
+        <div class="biome-name">Desert</div>
+        <div class="biome-danger">Danger 5</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #2a3038, #161a1e);">
+        <div class="biome-name">Seaside</div>
+        <div class="biome-danger">Danger 6</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #2e3338, #181c1e);">
+        <div class="biome-name">Winter</div>
+        <div class="biome-danger">Danger 7</div>
+      </div>
+      <div class="biome" style="background: linear-gradient(135deg, #3a1a10, #1e0e08);">
+        <div class="biome-name">Volcanic</div>
+        <div class="biome-danger">Danger 8</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Arsenal -->
+  <section id="arsenal">
+    <div class="section-label">Combat</div>
+    <h2 class="section-title">14 weapons. 6 damage types.</h2>
+    <p class="section-desc">From bare fists to a railgun. Find them, loot them, wield them — and pray they're enough.</p>
+
+    <div class="arsenal-grid">
+      <div class="arsenal-item">
+        <div class="dot" style="background: #888;"></div>
+        <div><div class="name">Fists</div><div class="type">Melee &middot; Physical</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #9a9a9a;"></div>
+        <div><div class="name">Lead Pipe</div><div class="type">Melee &middot; Physical</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #b8b8b8;"></div>
+        <div><div class="name">Machete</div><div class="type">Melee &middot; Physical</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: var(--red);"></div>
+        <div><div class="name">Fire Axe</div><div class="type">Melee &middot; Fire</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #e0e0e0;"></div>
+        <div><div class="name">Katana</div><div class="type">Melee &middot; Physical</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: var(--amber);"></div>
+        <div><div class="name">Chainsaw</div><div class="type">Melee &middot; Physical</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #b450dc;"></div>
+        <div><div class="name">Plasma Sword</div><div class="type">Melee &middot; Electric</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #9a9a9a;"></div>
+        <div><div class="name">Pistol</div><div class="type">Ranged &middot; Ballistic</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #b8b8b8;"></div>
+        <div><div class="name">Shotgun</div><div class="type">Ranged &middot; Ballistic</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: var(--amber);"></div>
+        <div><div class="name">SMG</div><div class="type">Ranged &middot; Ballistic</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #e0e0e0;"></div>
+        <div><div class="name">Assault Rifle</div><div class="type">Ranged &middot; Ballistic</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: var(--green);"></div>
+        <div><div class="name">Acid Gun</div><div class="type">Ranged &middot; Corrosive</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: var(--red);"></div>
+        <div><div class="name">Rocket Launcher</div><div class="type">Ranged &middot; Explosive</div></div>
+      </div>
+      <div class="arsenal-item">
+        <div class="dot" style="background: #648cff;"></div>
+        <div><div class="name">Railgun</div><div class="type">Ranged &middot; Electric</div></div>
+      </div>
     </div>
 
-    <h2>Information We Do Not Collect</h2>
-    <p>Norman Lives does not collect any personal information. Specifically, we do not collect:</p>
-    <ul>
-      <li>Names, email addresses, or contact information</li>
-      <li>Location data</li>
-      <li>Device identifiers or advertising IDs</li>
-      <li>Usage analytics or behavioral data</li>
-      <li>Crash reports or diagnostics</li>
-    </ul>
+    <div class="callout">
+      <h3>PERMADEATH IS REAL</h3>
+      <p>There are no extra lives. No cloud saves. No undo. When Norman dies, everything you earned dies with him. The wasteland doesn't care how far you got.</p>
+    </div>
+  </section>
 
-    <h2>On-Device Data</h2>
-    <p>Your game progress, settings, and inventory are stored locally on your device. If you use iCloud, this data may sync across your devices through Apple's iCloud service, which is governed by <a href="https://www.apple.com/legal/privacy/">Apple's Privacy Policy</a>.</p>
+  <!-- CTA bottom -->
+  <section style="text-align: center; padding-bottom: 100px;">
+    <div class="section-label">Available Now</div>
+    <h2 class="section-title" style="margin: 0 auto 16px;">How long will you survive?</h2>
+    <p class="section-desc" style="margin: 0 auto 32px;">Free to play with optional cosmetics and boosts. No ads. No paywalls. Just you and the wasteland.</p>
+    <a href="#" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Download on the App Store
+    </a>
+  </section>
 
-    <h2>Apple Services</h2>
-    <p>Norman Lives integrates with the following Apple services. Data handled by these services is governed by Apple's own privacy policies:</p>
-    <ul>
-      <li><strong>Game Center:</strong> Leaderboards and multiplayer functionality. Your Game Center display name may be visible to other players.</li>
-      <li><strong>In-App Purchases (StoreKit):</strong> All purchase transactions are processed entirely by Apple. We do not receive or store any payment information.</li>
-      <li><strong>iCloud:</strong> Game save data may be synced via iCloud if enabled on your device.</li>
-    </ul>
+  <footer>
+    <div class="inner">
+      <div class="copy">&copy; 2026 JBITPRO. All rights reserved.</div>
+      <div class="foot-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="mailto:jbrecker@jbitpro.com">Contact</a>
+      </div>
+    </div>
+  </footer>
 
-    <h2>Third-Party Services</h2>
-    <p>Norman Lives does not use any third-party analytics, advertising, or tracking services. There are no third-party SDKs embedded in the app.</p>
-
-    <h2>Children's Privacy</h2>
-    <p>Norman Lives does not knowingly collect personal information from anyone, including children under 13. Since we collect no data at all, there is no children's data to protect — but we want to be explicit about this commitment.</p>
-
-    <h2>Changes to This Policy</h2>
-    <p>If we update this Privacy Policy, we will post the revised version on this page with an updated "Last updated" date. Continued use of the app after changes constitutes acceptance of the revised policy.</p>
-
-    <h2>Contact Us</h2>
-    <p>If you have questions about this Privacy Policy, you can reach us at:</p>
-    <p><a href="mailto:jbrecker@jbitpro.com">jbrecker@jbitpro.com</a></p>
-
-    <footer>
-      &copy; 2026 JBITPRO. All rights reserved.
-    </footer>
-  </div>
 </body>
 </html>
