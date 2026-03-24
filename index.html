@@ -395,55 +395,25 @@
       footer .inner { flex-direction: column; text-align: center; }
     }
 
-    /* Searchlight overlay — wandering radial spotlight on TOP of content (matches in-game menu) */
-    .searchlight {
+    /* Searchlight canvas — procedural terrain revealed by wandering spotlight */
+    #searchlight-canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 9999;
-      overflow: hidden;
+      z-index: 0;
     }
-    .searchlight::before {
-      content: '';
-      position: absolute;
-      width: 800px;
-      height: 800px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(51,204,51,0.12) 0%, rgba(51,204,51,0.04) 30%, transparent 55%);
-      animation: searchlight-move 25s ease-in-out infinite;
-      filter: blur(60px);
-    }
-    .searchlight::after {
-      content: '';
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(245,166,35,0.09) 0%, rgba(245,166,35,0.03) 30%, transparent 55%);
-      animation: searchlight-move2 32s ease-in-out infinite;
-      filter: blur(60px);
-    }
-    @keyframes searchlight-move {
-      0%   { top: -5%; left: 10%; }
-      25%  { top: 55%; left: 65%; }
-      50%  { top: 25%; left: 75%; }
-      75%  { top: 65%; left: 5%; }
-      100% { top: -5%; left: 10%; }
-    }
-    @keyframes searchlight-move2 {
-      0%   { top: 65%; left: 55%; }
-      25%  { top: 10%; left: 20%; }
-      50%  { top: 50%; left: 5%; }
-      75%  { top: 5%; left: 70%; }
-      100% { top: 65%; left: 55%; }
+    /* All content above the canvas */
+    nav, .hero, section, .callout, .cta, footer {
+      position: relative;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-<div class="searchlight"></div>
+<canvas id="searchlight-canvas"></canvas>
 
   <nav>
     <div class="inner">
@@ -676,5 +646,150 @@
     </div>
   </footer>
 
+<script>
+(function() {
+  const canvas = document.getElementById('searchlight-canvas');
+  const ctx = canvas.getContext('2d');
+  const TILE = 12;
+  let tiles = [];
+  let cols, rows;
+  let terrainCanvas;
+
+  // Biome ground colors (from the game)
+  const BIOMES = [
+    { r:38,  g:89,  b:31  }, // Dense Forest
+    { r:64,  g:77,  b:46  }, // Forest Ruins
+    { r:102, g:97,  b:82  }, // Ruins
+    { r:97,  g:77,  b:66  }, // Ruined City
+    { r:217, g:191, b:140 }, // Desert
+    { r:230, g:209, b:153 }, // Seaside
+    { r:230, g:235, b:242 }, // Winter
+    { r:77,  g:71,  b:66  }, // Volcanic
+  ];
+
+  // Obstacle colors (darker variants)
+  const OBSTACLES = [
+    { r:20, g:50, b:15  }, // Forest trees
+    { r:40, g:45, b:30  }, // Ruins walls
+    { r:65, g:60, b:50  }, // Stone walls
+    { r:55, g:40, b:35  }, // City rubble
+    { r:160,g:130,b:80  }, // Sandstone
+    { r:120,g:100,b:70  }, // Driftwood
+    { r:180,g:185,b:195 }, // Ice
+    { r:45, g:25, b:15  }, // Volcanic rock
+  ];
+
+  // Seeded random (simple LCG)
+  let seed = 42;
+  function rand() {
+    seed = (seed * 1664525 + 1013904223) & 0xFFFFFFFF;
+    return (seed >>> 0) / 0xFFFFFFFF;
+  }
+
+  function generateTerrain() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+    cols = Math.ceil(w / TILE) + 1;
+    rows = Math.ceil(h / TILE) + 1;
+    tiles = [];
+    seed = 42;
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        // Choose biome based on position (radial from center like the game)
+        const cx = x - cols/2, cy = y - rows/2;
+        const dist = Math.sqrt(cx*cx + cy*cy);
+        const angle = Math.atan2(cy, cx);
+        const biomeIndex = Math.floor(((angle + Math.PI) / (Math.PI * 2)) * 8) % 8;
+        const biome = BIOMES[biomeIndex];
+        const obs = OBSTACLES[biomeIndex];
+
+        // Random variation
+        const isObstacle = rand() < 0.12;
+        const vary = (rand() - 0.5) * 20;
+
+        if (isObstacle) {
+          tiles.push({
+            r: Math.max(0, Math.min(255, obs.r + vary)),
+            g: Math.max(0, Math.min(255, obs.g + vary)),
+            b: Math.max(0, Math.min(255, obs.b + vary)),
+          });
+        } else {
+          tiles.push({
+            r: Math.max(0, Math.min(255, biome.r + vary)),
+            g: Math.max(0, Math.min(255, biome.g + vary)),
+            b: Math.max(0, Math.min(255, biome.b + vary)),
+          });
+        }
+      }
+    }
+
+    // Pre-render terrain to offscreen canvas
+    terrainCanvas = document.createElement('canvas');
+    terrainCanvas.width = w;
+    terrainCanvas.height = h;
+    const tctx = terrainCanvas.getContext('2d');
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const t = tiles[y * cols + x];
+        tctx.fillStyle = 'rgb(' + (t.r|0) + ',' + (t.g|0) + ',' + (t.b|0) + ')';
+        tctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+      }
+    }
+  }
+
+  let startTime = 0;
+  function render(time) {
+    if (!startTime) startTime = time;
+    const t = (time - startTime) / 1000;
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Clear to near-black (matches site background)
+    ctx.fillStyle = '#0a0a08';
+    ctx.fillRect(0, 0, w, h);
+
+    // Lissajous spotlight position (same formula as the game)
+    const spotX = w/2 + w * 0.35 * Math.sin(0.22 * t + Math.PI/4);
+    const spotY = h/2 + h * 0.35 * Math.sin(0.35 * t);
+    const radius = Math.min(w, h) * 0.22;
+
+    // Draw terrain only through a radial spotlight mask
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Create radial gradient mask
+    const grad = ctx.createRadialGradient(spotX, spotY, 0, spotX, spotY, radius);
+    grad.addColorStop(0, 'rgba(255,255,255,0.6)');
+    grad.addColorStop(0.5, 'rgba(255,255,255,0.25)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+
+    // Draw terrain
+    ctx.globalAlpha = 1;
+    ctx.drawImage(terrainCanvas, 0, 0);
+
+    // Apply mask: multiply with radial gradient to create spotlight
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.restore();
+
+    requestAnimationFrame(render);
+  }
+
+  generateTerrain();
+  requestAnimationFrame(render);
+
+  // Regenerate on resize
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(generateTerrain, 200);
+  });
+})();
+</script>
 </body>
 </html>
